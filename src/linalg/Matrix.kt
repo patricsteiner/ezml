@@ -2,18 +2,28 @@ package linalg
 
 import java.util.*
 
-class Matrix(val width: Int, val height: Int, init: (Int) -> Double = {0.0}, private val data: DoubleArray = DoubleArray(width * height, init)) {
+class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, private val data: DoubleArray = DoubleArray(height * width, init)) {
 
     init {
-        if (data.size != width*height) throw IllegalArgumentException("data does not match size")
+        if (data.size != height * width) throw IllegalArgumentException("data does not match size")
     }
 
     operator fun get(row: Int, col: Int): Double {
-        return data[row * col + col]
+        //if (row < 0 || row >=height || col < 0 || col > width) throw IndexOutOfBoundsException()
+        return data[width * row + col]
     }
 
     private operator fun set(row: Int, col: Int, value: Double) {
-        data[row * col + col] = value
+        //if (row < 0 || row >=height || col < 0 || col > width) throw IndexOutOfBoundsException()
+        data[width * row + col] = value
+    }
+
+    inline fun forEach(action: (Double) -> Unit) {
+        for (row in 0 until width) {
+            for (col in 0 until height) {
+                action(this[row, col])
+            }
+        }
     }
 
     fun map(function: (Double) -> Double, copy: Boolean = true): Matrix {
@@ -63,7 +73,7 @@ class Matrix(val width: Int, val height: Int, init: (Int) -> Double = {0.0}, pri
     }
 
     fun copy(): Matrix {
-        return Matrix(width, height, data = Arrays.copyOf(data,  data.size))
+        return Matrix(height, width, data = Arrays.copyOf(data,  data.size))
     }
 
     override fun toString(): String {
@@ -76,6 +86,23 @@ class Matrix(val width: Int, val height: Int, init: (Int) -> Double = {0.0}, pri
             sb.append("\n")
         }
         return sb.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as Matrix
+        if (width != other.width) return false
+        if (height != other.height) return false
+        if (!Arrays.equals(data, other.data)) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = width
+        result = 31 * result + height
+        result = 31 * result + Arrays.hashCode(data)
+        return result
     }
 }
 
