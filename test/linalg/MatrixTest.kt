@@ -172,6 +172,31 @@ class MatrixTest {
         r.forEach { assertEquals(-3.0, it) }
     }
 
+    @Test fun matrixMultiplication() {
+        val a = Matrix(2, 3, data = doubleArrayOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
+        val b = Matrix(3, 2, data = doubleArrayOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
+        val ab = Matrix(2, 2, data = doubleArrayOf(22.0, 28.0, 49.0, 64.0))
+        val c = Matrix(1, 3, data = doubleArrayOf(2.0, 4.0, -3.0))
+        val d = Matrix(3, 1, data = doubleArrayOf(1.5, 2.0, 3.0))
+        val cd = Matrix(1, 1, data = doubleArrayOf(2.0))
+        val dc = Matrix(3, 3, data = doubleArrayOf(3.0, 6.0, -4.5, 4.0, 8.0, -6.0, 6.0, 12.0, -9.0))
+        assertEquals(ab, a X b)
+        assertEquals(cd, c X d)
+        assertEquals(dc, d X c)
+        assertFails { a X c }
+        assertFails { b X c }
+        assertFails { c X a }
+    }
+
+    @Test fun transposition() {
+        val a = Matrix(2, 3, data = doubleArrayOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0))
+        val at = Matrix(3, 2, data = doubleArrayOf(1.0, 4.0, 2.0, 5.0, 3.0, 6.0))
+        val b = Matrix(1, 4, data = doubleArrayOf(1.0, 2.0, 3.0, 4.0))
+        val bt = Matrix(4, 1, data = doubleArrayOf(1.0, 2.0, 3.0, 4.0))
+        assertEquals(at, a.T)
+        assertEquals(bt, b.T)
+    }
+
     @Test fun copy() {
         val m = Matrix(2, 3, {3.0})
         val r = m.copy()

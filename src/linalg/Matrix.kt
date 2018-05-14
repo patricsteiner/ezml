@@ -8,13 +8,15 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
         if (data.size != height * width) throw IllegalArgumentException("data does not match size")
     }
 
+    val T get() = transpose()
+
     operator fun get(row: Int, col: Int): Double {
-        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException()
+        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException("invalid index")
         return data[width * row + col]
     }
 
     private operator fun set(row: Int, col: Int, value: Double) {
-        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException()
+        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException("invalid index")
         data[width * row + col] = value
     }
 
@@ -75,36 +77,59 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
         return map({it + n.toDouble()}, false)
     }
 
-    operator fun plus(m: Matrix) {
-        zip(m, {a, b -> a + b}, false)
+    operator fun plus(m: Matrix): Matrix {
+        return zip(m, {a, b -> a + b}, false)
     }
 
     operator fun minus(n: Number): Matrix {
         return map({it - n.toDouble()}, false)
     }
 
-    operator fun minus(m: Matrix) {
-        zip(m, {a, b -> a - b}, false)
+    operator fun minus(m: Matrix): Matrix {
+        return zip(m, {a, b -> a - b}, false)
     }
 
     operator fun times(n: Number): Matrix {
         return map({it * n.toDouble()}, false)
     }
 
-    operator fun times(m: Matrix) {
-        zip(m, {a, b -> a * b}, false)
+    operator fun times(m: Matrix): Matrix {
+        return zip(m, {a, b -> a * b}, false)
     }
 
     operator fun div(n: Number): Matrix {
         return map({it / n.toDouble()}, false)
     }
 
-    operator fun div(m: Matrix) {
-        zip(m, {a, b -> a / b}, false)
+    operator fun div(m: Matrix): Matrix {
+        return zip(m, {a, b -> a / b}, false)
     }
 
     operator fun unaryMinus(): Matrix {
         return map({-it})
+    }
+
+    infix fun X(m: Matrix): Matrix {
+        if (width != m.height) throw IllegalArgumentException("dimensions do not agree")
+        val res = DoubleArray(height * m.width)
+        for (i in 0 until height) {
+            for (j in 0 until width) {
+                for (k in 0 until m.width) {
+                    res[height * i + k] += this[i, j] * m[j, k]
+                }
+            }
+        }
+        return Matrix(height, m.width, data = res)
+    }
+
+    fun transpose(): Matrix {
+        val res = Matrix(width, height)
+        for (i in 0 until height) {
+            for (j in 0 until width) {
+                res[j, i] = this[i, j]
+            }
+        }
+        return res
     }
 
     fun equalShape(other: Matrix): Boolean { // TODO should this be nullable?
@@ -117,9 +142,9 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
 
     override fun toString(): String {
         val sb = StringBuilder()
-        for (row in 0 until width) {
-            for (col in 0 until height) {
-                sb.append(String.format("%.4f", this[row, col]))
+        for (i in 0 until height) {
+            for (j in 0 until width) {
+                sb.append(String.format("%.4f", this[i, j]))
                 sb.append("\t\t")
             }
             sb.append("\n")
@@ -159,4 +184,12 @@ operator fun Number.times(matrix: Matrix): Matrix {
 
 operator fun Number.div(matrix: Matrix): Matrix {
     return matrix.map({this.toDouble()/it}, false)
+}
+
+fun Vector(vararg data: Double): Matrix {
+    return Matrix(1, data.size, data = data)
+}
+
+fun Vector(length: Int, init: (Int) -> Double = {0.0}): Matrix {
+    return Matrix(1, length, init)
 }
