@@ -23,7 +23,7 @@ class MatrixTest {
         }
     }
 
-    @Test fun invalidIndex() {
+    @Test fun get() {
         val m = Matrix(2, 3)
         m[1, 0]
         m[1, 2]
@@ -32,5 +32,43 @@ class MatrixTest {
         assertFails { m[2, 3] }
         assertFails { m[-1, 1] }
         assertFails { m[0, -1] }
+        assertFails { m[0, 3] }
+        assertFails { m[-1, 5] }
+    }
+
+    @Test fun forEach() {
+        val m = Matrix(20, 30, {0.25})
+        var sum = 0.0
+        m.forEach { sum += it }
+        assertEquals(150.0, sum)
+    }
+
+    @Test fun map() {
+        val m = Matrix(2, 3, {0.0})
+        val mapped = m.map({2.0})
+        m.forEach { assertEquals(0.0, it) }
+        mapped.forEach { assertEquals(2.0, it) }
+        m.map({3.0}, true)
+        m.forEach { assertEquals(3.0, it) }
+    }
+
+    @Test fun plusNumber() {
+        val m = Matrix(2, 3, {0.0})
+        val r = m + 5
+        m.forEach { assertEquals(0.0, it) }
+        r.forEach { assertEquals(5.0, it) }
+    }
+
+    @Test fun plusAssignNumber() {
+        val m = Matrix(2, 3, {0.0})
+        m += 5
+        m.forEach { assertEquals(5.0, it) }
+    }
+
+    @Test fun numberPlus() {
+        val m = Matrix(2, 3, {0.0})
+        val r = 5 + m
+        m.forEach { assertEquals(0.0, it) }
+        r.forEach { assertEquals(5.0, it) }
     }
 }

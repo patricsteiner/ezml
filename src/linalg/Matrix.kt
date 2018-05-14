@@ -9,63 +9,57 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
     }
 
     operator fun get(row: Int, col: Int): Double {
-        //if (row < 0 || row >=height || col < 0 || col > width) throw IndexOutOfBoundsException()
+        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException()
         return data[width * row + col]
     }
 
     private operator fun set(row: Int, col: Int, value: Double) {
-        //if (row < 0 || row >=height || col < 0 || col > width) throw IndexOutOfBoundsException()
+        if (row < 0 || row >=height || col < 0 || col >= width) throw IndexOutOfBoundsException()
         data[width * row + col] = value
     }
 
-    inline fun forEach(action: (Double) -> Unit) {
-        for (row in 0 until width) {
-            for (col in 0 until height) {
-                action(this[row, col])
-            }
-        }
+    fun forEach(action: (Double) -> Unit) {
+        data.forEach(action)
     }
 
-    fun map(function: (Double) -> Double, copy: Boolean = true): Matrix {
-        val res = if (copy) copy() else this
-        for (row in 0 until width) {
-            for (col in 0 until height) {
-                res[row, col] = function(this[row, col])
-            }
+    fun map(f: (Double) -> Double, inPlace: Boolean = false): Matrix {
+        val res = if (inPlace) this else copy()
+        for (i in 0 until res.data.size) {
+            res.data[i] = f(res.data[i])
         }
         return res
     }
 
     operator fun plusAssign(n: Number) {
-        map({it + n.toDouble()}, false)
+        map({it + n.toDouble()}, true)
     }
 
     operator fun minusAssign(n: Number) {
-        map({it - n.toDouble()}, false)
+        map({it - n.toDouble()}, true)
     }
 
     operator fun timesAssign(n: Number) {
-        map({it * n.toDouble()}, false)
+        map({it * n.toDouble()}, true)
     }
 
     operator fun divAssign(n: Number) {
-        map({it / n.toDouble()}, false)
+        map({it / n.toDouble()}, true)
     }
 
     operator fun plus(n: Number): Matrix {
-        return map({it + n.toDouble()}, true)
+        return map({it + n.toDouble()}, false)
     }
 
     operator fun minus(n: Number): Matrix {
-        return map({it - n.toDouble()}, true)
+        return map({it - n.toDouble()}, false)
     }
 
     operator fun times(n: Number): Matrix {
-        return map({it * n.toDouble()}, true)
+        return map({it * n.toDouble()}, false)
     }
 
     operator fun div(n: Number): Matrix {
-        return map({it / n.toDouble()}, true)
+        return map({it / n.toDouble()}, false)
     }
 
     operator fun unaryMinus(): Matrix {
@@ -119,5 +113,5 @@ operator fun Number.times(matrix: Matrix): Matrix {
 }
 
 operator fun Number.div(matrix: Matrix): Matrix {
-    return matrix.map({this.toDouble()/it}, true)
+    return matrix.map({this.toDouble()/it}, false)
 }
