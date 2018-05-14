@@ -1,8 +1,7 @@
 package linalg
 
 import org.testng.annotations.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
+import kotlin.test.*
 
 class MatrixTest {
 
@@ -55,20 +54,133 @@ class MatrixTest {
     @Test fun plusNumber() {
         val m = Matrix(2, 3, {0.0})
         val r = m + 5
+        val s = m + -2.2
         m.forEach { assertEquals(0.0, it) }
         r.forEach { assertEquals(5.0, it) }
+        s.forEach { assertEquals(-2.2, it) }
     }
 
     @Test fun plusAssignNumber() {
         val m = Matrix(2, 3, {0.0})
         m += 5
-        m.forEach { assertEquals(5.0, it) }
+        m += -2.5
+        m.forEach { assertEquals(2.5, it) }
     }
 
     @Test fun numberPlus() {
-        val m = Matrix(2, 3, {0.0})
+        val m = Matrix(2, 3, {1.0})
         val r = 5 + m
+        val s = -5.25f + m
+        m.forEach { assertEquals(1.0, it) }
+        r.forEach { assertEquals(6.0, it) }
+        s.forEach { assertEquals(-4.25, it) }
+    }
+
+    @Test fun minusNumber() {
+        val m = Matrix(2, 3, {0.0})
+        val r = m - 5
+        val s = m - -2.2
         m.forEach { assertEquals(0.0, it) }
-        r.forEach { assertEquals(5.0, it) }
+        r.forEach { assertEquals(-5.0, it) }
+        s.forEach { assertEquals(2.2, it) }
+    }
+
+    @Test fun minusAssignNumber() {
+        val m = Matrix(2, 3, {0.0})
+        m -= 5
+        m -= -2.5
+        m.forEach { assertEquals(-2.5, it) }
+    }
+
+    @Test fun numberMinus() {
+        val m = Matrix(2, 3, {1.0})
+        val r = 5 - m
+        val s = -5.25f - m
+        m.forEach { assertEquals(1.0, it) }
+        r.forEach { assertEquals(4.0, it) }
+        s.forEach { assertEquals(-6.25, it) }
+    }
+
+    @Test fun timesNumber() {
+        val m = Matrix(2, 3, {2.0})
+        val r = m * 5
+        val s = m * -1
+        m.forEach { assertEquals(2.0, it) }
+        r.forEach { assertEquals(10.0, it) }
+        s.forEach { assertEquals(-2.0, it) }
+    }
+
+    @Test fun timesAssignNumber() {
+        val m = Matrix(2, 3, {2.0})
+        m *= 5
+        m *= -1
+        m.forEach { assertEquals(-10.0, it) }
+    }
+
+    @Test fun numberTimes() {
+        val m = Matrix(2, 3, {2.0})
+        val r = 5 * m
+        val s = -2 * m
+        m.forEach { assertEquals(2.0, it) }
+        r.forEach { assertEquals(10.0, it) }
+        s.forEach { assertEquals(-4.0, it) }
+    }
+
+    @Test fun divNumber() {
+        val m = Matrix(2, 3, {12.0})
+        val r = m / 3
+        val s = m / -4
+        m.forEach { assertEquals(12.0, it) }
+        r.forEach { assertEquals(4.0, it) }
+        s.forEach { assertEquals(-3.0, it) }
+    }
+
+    @Test fun divAssignNumber() {
+        val m = Matrix(2, 3, {9.0})
+        m /= 3
+        m /= -2
+        m.forEach { assertEquals(-1.5, it) }
+    }
+
+    @Test fun numberDiv() {
+        val m = Matrix(2, 3, {3.0})
+        val r = 12 / m
+        val s = -6 / m
+        m.forEach { assertEquals(3.0, it) }
+        r.forEach { assertEquals(4.0, it) }
+        s.forEach { assertEquals(-2.0, it) }
+    }
+
+    @Test fun unaryMinus() {
+        val m = Matrix(2, 3, {3.0})
+        val r = -m
+        m.forEach { assertEquals(3.0, it) }
+        r.forEach { assertEquals(-3.0, it) }
+    }
+
+    @Test fun copy() {
+        val m = Matrix(2, 3, {3.0})
+        val r = m.copy()
+        r.map({6.0}, true)
+        assertEquals(2, r.height)
+        assertEquals(3, r.width)
+        m.forEach { assertEquals(3.0, it) }
+        r.forEach { assertEquals(6.0, it) }
+    }
+
+    @Test fun equals() { // TODO how to properly test equals? == vs === vs equals()?
+        val m = Matrix(2, 3, {3.0})
+        val r = Matrix(3, 2, {3.0})
+        val s = m.copy()
+        assertTrue(m.equals(s))
+        assertTrue(m == s)
+        assertEquals(m, s)
+        s.map({6.0}, true)
+        assertFalse(m.equals(s))
+        assertFalse(m == s)
+        assertNotEquals(m, s)
+        assertFalse(m.equals(r))
+        assertFalse(m == r)
+        assertNotEquals(m, r)
     }
 }

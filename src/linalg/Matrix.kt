@@ -66,6 +66,10 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
         return map({-it})
     }
 
+    fun equalShape(other: Matrix): Boolean { // TODO should this be nullable?
+        return width == other.width && height == other.height
+    }
+
     fun copy(): Matrix {
         return Matrix(height, width, data = Arrays.copyOf(data,  data.size))
     }
