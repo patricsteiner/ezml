@@ -51,6 +51,20 @@ class MatrixTest {
         m.forEach { assertEquals(3.0, it) }
     }
 
+    @Test fun zip() {
+        val m1 = Matrix(2, 3, {1.0})
+        val m2 = Matrix(2, 3, {2.0})
+        val m3 = Matrix(3, 2)
+        assertFails { m1.zip(m3, {_, _ -> 0.0}) }
+        val zipped = m1.zip(m2, {a, b -> a + b})
+        m1.forEach { assertEquals(1.0, it) }
+        m2.forEach { assertEquals(2.0, it) }
+        zipped.forEach { assertEquals(3.0, it) }
+        m1.zip(m2, {a, b -> a + b}, true)
+        m1.forEach { assertEquals(3.0, it) }
+        m2.forEach { assertEquals(2.0, it) }
+    }
+
     @Test fun plusNumber() {
         val m = Matrix(2, 3, {0.0})
         val r = m + 5

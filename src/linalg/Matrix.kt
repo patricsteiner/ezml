@@ -30,36 +30,77 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
         return res
     }
 
+    fun zip(m: Matrix, f: (Double, Double) -> Double, inPlace: Boolean = false): Matrix {
+        if (!equalShape(m)) throw IllegalArgumentException("Shapes must match") // TODO use typed exception
+        val res = if (inPlace) this else copy()
+        for (i in 0 until data.size) {
+            res.data[i] = f(res.data[i], m.data[i])
+        }
+        return res
+    }
+
     operator fun plusAssign(n: Number) {
         map({it + n.toDouble()}, true)
+    }
+
+    operator fun plusAssign(m: Matrix) {
+        zip(m, {a, b -> a + b}, true)
     }
 
     operator fun minusAssign(n: Number) {
         map({it - n.toDouble()}, true)
     }
 
+    operator fun minusAssign(m: Matrix) {
+        zip(m, {a, b -> a - b}, true)
+    }
+
     operator fun timesAssign(n: Number) {
         map({it * n.toDouble()}, true)
+    }
+
+    operator fun timesAssign(m: Matrix) {
+        zip(m, {a, b -> a * b}, true)
     }
 
     operator fun divAssign(n: Number) {
         map({it / n.toDouble()}, true)
     }
 
+    operator fun divAssign(m: Matrix) {
+        zip(m, {a, b -> a / b}, true)
+    }
+
     operator fun plus(n: Number): Matrix {
         return map({it + n.toDouble()}, false)
+    }
+
+    operator fun plus(m: Matrix) {
+        zip(m, {a, b -> a + b}, false)
     }
 
     operator fun minus(n: Number): Matrix {
         return map({it - n.toDouble()}, false)
     }
 
+    operator fun minus(m: Matrix) {
+        zip(m, {a, b -> a - b}, false)
+    }
+
     operator fun times(n: Number): Matrix {
         return map({it * n.toDouble()}, false)
     }
 
+    operator fun times(m: Matrix) {
+        zip(m, {a, b -> a * b}, false)
+    }
+
     operator fun div(n: Number): Matrix {
         return map({it / n.toDouble()}, false)
+    }
+
+    operator fun div(m: Matrix) {
+        zip(m, {a, b -> a / b}, false)
     }
 
     operator fun unaryMinus(): Matrix {
