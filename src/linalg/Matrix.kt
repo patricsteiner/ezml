@@ -110,11 +110,11 @@ class Matrix(val height: Int, val width: Int, init: (Int) -> Double = {0.0}, pri
     }
 
     infix fun X(m: Matrix): Matrix {
-        if (width != m.height) throw IllegalArgumentException("dimensions do not agree")
+        if (width != m.height) throw IllegalArgumentException("dimensions do not agree (${height}x${width} X ${m.height}x${m.width})")
         val res = DoubleArray(height * m.width)
         for (i in 0 until height) {
             for (j in 0 until width) {
-                for (k in 0 until m.width) {
+                for (k in 0 until m.width) { // TODO is there a mistake in the array access? can be out of bound sometimes...
                     res[height * i + k] += this[i, j] * m[j, k]
                 }
             }
